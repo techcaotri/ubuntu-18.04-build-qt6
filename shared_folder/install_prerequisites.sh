@@ -8,7 +8,7 @@ wget https://apt.llvm.org/llvm.sh
 chmod +x llvm.sh
 sudo ./llvm.sh 12
 sudo apt update
-sudo apt install clang-12 lldb-12 lld-12 -y
+sudo apt install clang-12 libclang-12-dev lldb-12 lld-12 -y
 
 # Install the most recent harfbuzz, freetype, and fontconfig
 sudo add-apt-repository ppa:savoury1/backports
