@@ -21,6 +21,11 @@ RUN apt-get install apt-utils \
   libncurses5-dev libncursesw5-dev xz-utils liblzma-dev \
   g++ make unzip zip -y
 
+# Install Qt6 build dependencies
+COPY install_prerequisites.sh /tmp/install_prerequisites.sh
+RUN chmod +x /tmp/install_prerequisites.sh
+RUN /tmp/install_prerequisites.sh
+
 # Set locale
 RUN locale-gen en_US.UTF-8
 
