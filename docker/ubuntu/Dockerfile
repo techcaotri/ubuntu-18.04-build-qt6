@@ -5,8 +5,14 @@ USER root
 ENV TZ=Asia/Ho_Chi_Minh
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt-get update && \
-    apt-get install -y openssh-server xauth mesa-utils && \
+RUN apt-get update && apt-get install apt-utils wget -y
+
+COPY choose_fastest_mirror.sh /tmp/choose_fastest_mirror.sh
+RUN chmod +x /tmp/choose_fastest_mirror.sh
+RUN /tmp/choose_fastest_mirror.sh
+RUN cat /etc/apt/sources.list
+
+RUN apt-get install -y openssh-server xauth mesa-utils && \
     mkdir -p /var/run/sshd && \
     echo 'root:root' | chpasswd && \
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
@@ -23,14 +29,13 @@ RUN apt-get install -y -qq --no-install-recommends \
     libxext6 \
     libx11-6 libegl1-mesa-dev
 
-RUN apt-get install apt-utils \
-  sudo vim git wget curl locales ssh htop \
+RUN apt-get install sudo vim git curl locales ssh htop \
   build-essential libssl-dev zlib1g-dev libbz2-dev \
-  libreadline-dev libsqlite3-dev wget curl llvm \
+  libreadline-dev libsqlite3-dev llvm \
   libncurses5-dev libncursesw5-dev xz-utils liblzma-dev \
   g++ make unzip zip -y
 
-# Install Qt6 build dependencies
+# Install dependencies for building Qt6 with OpenGL support and other features
 COPY install_prerequisites.sh /tmp/install_prerequisites.sh
 RUN chmod +x /tmp/install_prerequisites.sh
 RUN /tmp/install_prerequisites.sh
@@ -51,5 +56,6 @@ ENV NVIDIA_DRIVER_CAPABILITIES graphics,utility,compute
 EXPOSE 22
 # RUN /usr/sbin/sshd -d &
 CMD ["/usr/sbin/sshd", "-D"]
+WORKDIR /home/user
 
 
