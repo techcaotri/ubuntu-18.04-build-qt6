@@ -1,0 +1,17 @@
+--- /home/tripham/Dev/Playground_Qt_QML/ubuntu-18.04-build-qt6/shared_folder/qt-everywhere-src-6.4.3/qtmultimedia/src/plugins/multimedia/ffmpeg/qv4l2camera.cpp	2023-03-12 10:46:05.000000000 +0700
++++ ./qtmultimedia/src/plugins/multimedia/ffmpeg/qv4l2camera.cpp	2023-04-03 14:02:56.076927847 +0700
+@@ -22,6 +22,14 @@
+ 
+ #include <linux/videodev2.h>
+ 
++#ifndef V4L2_PIX_FMT_BGRA32
++#define V4L2_PIX_FMT_BGRA32  v4l2_fourcc('R', 'A', '2', '4') /* 32  ABGR-8-8-8-8  */
++#endif
++
++#ifndef V4L2_PIX_FMT_RGBA32
++#define V4L2_PIX_FMT_RGBA32  v4l2_fourcc('A', 'B', '2', '4') /* 32  RGBA-8-8-8-8  */
++#endif
++
+ QT_BEGIN_NAMESPACE
+ 
+ QV4L2CameraDevices::QV4L2CameraDevices(QPlatformMediaIntegration *integration)
