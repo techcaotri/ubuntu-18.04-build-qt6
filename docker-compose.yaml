@@ -5,7 +5,13 @@ services:
     image: ubuntu:18.04
     build: ./docker/ubuntu
     container_name: ubuntu_18_04
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
     volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ./shared_folder:/shared_folder
       - ssh-keys:/root/.ssh
     networks:
@@ -14,10 +20,12 @@ services:
       - "2222:22"
     stdin_open: true # docker run -i
     tty: true        # docker run -t
+    runtime: nvidia
 
 networks:
   ubuntu_network:
     name: ubuntu_network
+    driver: bridge
   
 volumes:
   ssh-keys:
