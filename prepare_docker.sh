@@ -2,4 +2,5 @@
 
 docker-compose down
 # docker-compose build --force-rm
-docker-compose up --build --force-recreate -d
+xhost +local:root
+docker-compose up --build --force-recreate --remove-orphans -d
