@@ -7,6 +7,9 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update && apt-get install apt-utils wget -y
 
+ARG DISPLAY
+RUN echo "DISPLAY: ${DISPLAY}"
+
 COPY choose_fastest_mirror.sh /tmp/choose_fastest_mirror.sh
 RUN chmod +x /tmp/choose_fastest_mirror.sh
 RUN /tmp/choose_fastest_mirror.sh
@@ -14,9 +17,13 @@ RUN cat /etc/apt/sources.list
 
 RUN apt-get install -y openssh-server xauth mesa-utils && \
     mkdir -p /var/run/sshd && \
-    echo 'root:root' | chpasswd && \
-    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
-    sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
+    echo 'root:root' | chpasswd \
+    && grep "^export DISPLAY=" /root/.profile || sh -c "echo 'export DISPLAY=${DISPLAY}' >> /root/.profile" \
+    && sed -i "s/^.*X11Forwarding.*$/X11Forwarding yes/" /etc/ssh/sshd_config \
+    # && sed -i "s/^.*X11UseLocalhost.*$/X11UseLocalhost no/" /etc/ssh/sshd_config \
+    # && grep "^X11UseLocalhost" /etc/ssh/sshd_config || echo "X11UseLocalhost no" >> /etc/ssh/sshd_config \
+    && sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config \
+    && sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
 
 RUN apt-get install locales sudo net-tools lsb-release software-properties-common gnupg -y
 

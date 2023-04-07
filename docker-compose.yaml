@@ -3,7 +3,10 @@ version: '3.8'
 services:
   ubuntu:
     image: ubuntu:18.04
-    build: ./docker/ubuntu
+    build:
+      context: ./docker/ubuntu
+      args:
+      - DISPLAY=${DISPLAY}
     container_name: ubuntu_18_04
     environment:
       - DISPLAY=${DISPLAY}
